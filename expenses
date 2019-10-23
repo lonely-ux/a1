@@ -81,12 +81,18 @@ class Main_Window:
         self.ent4 = StringVar(master)
         self.ent5 = StringVar(master)
         self.ent6 = StringVar(master)
-        self.E1 = Entry(master, textvar=self.ent1, bd=5).place(x=210, y=86)
-        self.E2 = Entry(master, textvar=self.ent2, bd=5).place(x=210, y=136)
-        self.E3 = Entry(master, textvar=self.ent3, bd=5).place(x=210, y=186)
-        self.E4 = Entry(master, textvar=self.ent4, bd=5).place(x=210, y=236)
-        self.E5 = Entry(master, textvar=self.ent5, bd=5).place(x=210, y=286)
-        self.E6 = Entry(master, textvar=self.ent6, bd=5, font=('arial', 15)).pack(side='bottom')
+        self.E1 = Entry(master, textvar=self.ent1, bd=5)
+        self.E1.place(x=210, y=86)
+        self.E2 = Entry(master, textvar=self.ent2, bd=5)
+        self.E2.place(x=210, y=136)
+        self.E3 = Entry(master, textvar=self.ent3, bd=5)
+        self.E3.place(x=210, y=186)
+        self.E4 = Entry(master, textvar=self.ent4, bd=5)
+        self.E4.place(x=210, y=236)
+        self.E5 = Entry(master, textvar=self.ent5, bd=5)
+        self.E5.place(x=210, y=286)
+        self.E6 = Entry(master, textvar=self.ent6, bd=5, font=('arial', 15))
+        self.E6.pack(side='bottom')
         self.M1 = Menu(master)
         self.profM1 = Menu(self.M1, tearoff=0)
         self.profM1.add_command(label='NEW', command=exc.sheet_window)
@@ -99,17 +105,13 @@ class Main_Window:
         self.editM1.add_command(label='VIEW', command=file_path)
         self.M1.add_cascade(label='EDIT', menu=self.editM1)
 
-    def clear(self): #***this is where i have my current problem, i want to clear or refreshall entry widgets so I can write new info
-        c1 = self.E1
-        c1.delete(0, END)
-        c2 = self.E2
-        c2.delete(0, END)
-        c3 = self.E3
-        c3.delete(0, END)
-        c4 = self.E4
-        c4.self(0, END)
-        c5 = self.E5
-        c5.delete(0, END)
+    def clear(self): #clearing entry widgets so that new info can be written without manually deleting things
+        self.E1.delete(0, END)
+        self.E2.delete(0, END)
+        self.E3.delete(0, END
+        self.E4.delete(0, END)
+        self.E5.delete(0, END)
+       
 
 
 main = Main_Window(screen)
