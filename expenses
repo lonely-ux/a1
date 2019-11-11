@@ -32,23 +32,25 @@ class totals:
         self.tot_food = round(self.df.query('FOOD==1')['Price'].sum(), 2)
         self.tot_clothes = round(self.df.query('CLOTHES==1')['Price'].sum(), 2)
         self.tot_supplies = round(self.df.query('SUPPLIES==1')['Price'].sum(), 2)
-        self.tot_games = round(self.df.query('GAMES==1')['Price'].sum(), 2)
-    #This total is how much moeny overall was spent and bills were payed
+        self.tot_games = round(self.df.query('LUXURY==1')['Price'].sum(), 2)
+        self.tot_credit = round(self.df.query('CREDIT==1')['Price'].sum(), 2)   
+#This total is how much moeny overall was spent and bills were payed
     def main_total(self):
         var.entry6a.set(str(self.bill_tot) + '$')
-        var.entry7.set(str(self.total) + '$')
-    #This one is to show the total amount amount of money spent in different categories of items
+        var.entry7.set(str(self.total - self.tot_credit) + '$')
+#This one is to show the total amount amount of money spent in different categories of items
     def cats_total(self):
         var.second1.set(str(self.tot_gas) + '$')
         var.second2.set(str(self.tot_food) + '$')
         var.second3.set(str(self.tot_clothes) + '$')
         var.second4.set(str(self.tot_supplies) + '$')
         var.second5.set(str(self.tot_games) + '$')
+        var.second6.set(str(self.tot_credit) + '$')
     
 
 t = totals()
 
-#I had alot of variables because of all the entry boxes, and checkbuttons in the app, so I decided to stick them in a class so I could
+#I had alot of variables because of all the entry boxes and checkbuttons in the app, so I decided to stick them in a class so I could
 #easily use them
 class variables:
     def __init__(self):
@@ -57,6 +59,7 @@ class variables:
         self.second3 = tk.DoubleVar(screen)
         self.second4 = tk.DoubleVar(screen)
         self.second5 = tk.DoubleVar(screen)
+        self.second6 = tk.DoubleVar(screen)
         self.entry1 = tk.StringVar(screen)
         self.entry2 = tk.StringVar(screen)
         self.entry3 = tk.DoubleVar(screen)
@@ -70,6 +73,7 @@ class variables:
         self.check3 = tk.DoubleVar(screen)
         self.check4 = tk.DoubleVar(screen)
         self.check5 = tk.DoubleVar(screen)
+        self.check6 = tk.DoubleVar(screen)
 
 
 var = variables()
@@ -80,21 +84,24 @@ def second_window():
     window.geometry('500x400')
     window.title('Categories')
     L = tk.Label(window, text='Categories', font=('arial', 30, 'bold')).pack(side='top')
-    L1 = tk.Label(window, text='GAS:', font=('arial', 15)).place(x=74, y=80)
-    L2 = tk.Label(window, text='FOOD:', font=('arial', 15)).place(x=57, y=130)
-    L3 = tk.Label(window, text='CLOTHES:', font=('arial', 15)).place(x=23, y=180)
-    L4 = tk.Label(window, text='SUPPLIES:', font=('arial', 15)).place(x=20, y=230)
-    L5 = tk.Label(window, text='GAMES:', font=('arial', 15)).place(x=44, y=280)
+    L1 = tk.Label(window, text='GAS:', font=('arial', 15)).place(x=84, y=80)
+    L2 = tk.Label(window, text='FOOD:', font=('arial', 15)).place(x=67, y=130)
+    L3 = tk.Label(window, text='CLOTHES:', font=('arial', 15)).place(x=33, y=180)
+    L4 = tk.Label(window, text='SUPPLIES:', font=('arial', 15)).place(x=30, y=230)
+    L5 = tk.Label(window, text='LUXURY:', font=('arial', 15)).place(x=52, y=280)
+    L6 = tk.Label(window, text='CREDIT:', font=('arial', 15)).place(x=52, y=330)
     E1 = tk.Entry(window, textvar=var.second1, bd=5)
-    E1.place(x=140, y=80)
+    E1.place(x=150, y=80)
     E2 = tk.Entry(window, textvar=var.second2, bd=5)
-    E2.place(x=140, y=130)
+    E2.place(x=150, y=130)
     E3 = tk.Entry(window, textvar=var.second3, bd=5)
-    E3.place(x=140, y=180)
+    E3.place(x=150, y=180)
     E4 = tk.Entry(window, textvar=var.second4, bd=5)
-    E4.place(x=140, y=230)
+    E4.place(x=150, y=230)
     E5 = tk.Entry(window, textvar=var.second5, bd=5)
-    E5.place(x=140, y=280)
+    E5.place(x=150, y=280)
+    E6 = tk.Entry(window, textvar=var.second6, bd=5)
+    E6.place(x=150, y=330)
     B1 = tk.Button(window, text='Show_Totals', font=('arial', 15, 'bold'), command=t.cats_total).place(x=320, y=100)
     window.mainloop
 
@@ -119,13 +126,14 @@ class NEW_SHEET:
 
     def save_total(self):
         ws = self.wb[self.sheets[-1]]
-        grand_tot = (t.total + t.bill_tot)
-        ws['L2'] = grand_tot
-        ws['L3'] = 'GAS: ' + str(t.tot_gas)
-        ws['L4'] = 'FOOD: ' + str(t.tot_food)
-        ws['L5'] = 'CLOTHES: ' + str(t.tot_clothes)
-        ws['L6'] = 'SUPPLIES: ' + str(t.tot_supplies)
-        ws['L7'] = 'GAMES: ' + str(t.tot_games)
+        grand_tot = ((t.total - t.tot_credit) + t.bill_tot)
+        ws['M2'] = grand_tot
+        ws['M3'] = 'GAS: ' + str(t.tot_gas)
+        ws['M4'] = 'FOOD: ' + str(t.tot_food)
+        ws['M5'] = 'CLOTHES: ' + str(t.tot_clothes)
+        ws['M6'] = 'SUPPLIES: ' + str(t.tot_supplies)
+        ws['M7'] = 'LUXURY: ' + str(t.tot_games)
+        ws['M8'] = 'CREDIT: ' + str(t.tot_credit)
         self.wb.save(filename)
         self.new_sheet()
 
@@ -136,7 +144,7 @@ class NEW_SHEET:
 
     def append_to(self):
         cats = ['Store', 'Item', 'Price', 'Payment_Method', 'Date_Purchased', 'Bills', 
-        'GAS', 'FOOD','CLOTHES', 'SUPPLIES', 'GAMES', 'TOTAL']
+        'GAS', 'FOOD','CLOTHES', 'SUPPLIES', 'LUXURY', 'CREDIT', 'TOTAL']
         sheets = self.wb.sheetnames
         ws = self.wb[sheets[-1]]
         ws.append(cats)
@@ -213,11 +221,12 @@ class Enter_Info:
         self.C2 = tk.Checkbutton(screen, text='FOOD', variable=var.check2, font=('arial', 12)).place(x=400, y=106)
         self.C3 = tk.Checkbutton(screen, text='CLOTHES', variable=var.check3, font=('arial', 12)).place(x=400, y=126)
         self.C4 = tk.Checkbutton(screen, text='SUPPLIES', variable=var.check4, font=('arial', 12)).place(x=400, y=146)
-        self.C5 = tk.Checkbutton(screen, text='GAMES', variable=var.check5, font=('arial', 12)).place(x=400, y=166)
+        self.C5 = tk.Checkbutton(screen, text='LUXURY', variable=var.check5, font=('arial', 12)).place(x=400, y=166)
+        self.C6 = tk.Checkbutton(screen, text='WITH_CREDIT', variable=var.check6, font=('arial', 12)).place(x=400, y=186)
 
     def enter(self):
         inf = [var.entry1.get(), var.entry2.get(), var.entry3.get(), var.entry4.get(), var.entry5.get(), var.entry6.get(),
-        var.check1.get(), var.check2.get(), var.check3.get(), var.check4.get(), var.check5.get()]
+        var.check1.get(), var.check2.get(), var.check3.get(), var.check4.get(), var.check5.get(), var.check6.get()]
         sheets = self.wb.sheetnames
         ws = self.wb[sheets[-1]]
         ws.append(inf)
