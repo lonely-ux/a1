@@ -15,40 +15,40 @@ def main():
     screen = tk.Tk()
     screen.geometry("720x500")
     screen.title("Finances")
-    filename = Path("/home/tetro/Desktop/1/programs/personal_expenses/Expenses.xlsx")
-    finances_txt = Path("/home/tetro/Desktop/1/programs/personal_expenses/finances.txt")
+    filename = Path("/path/to/file/Expenses.xlsx")
+    finances_txt = Path("/path/to/file/finances.txt")
 
-
+    #Cool thing i found on stack overflow where it "checks" what os you are on, and uses the correct method to launch the file correctly.
     def file_path():
         if sys.platform == "win32":
             os.startfile(filename)
         else:
             opener = "open" if sys.platform =="darwin" else "xdg-open"
             subprocess.call([opener, filename])
-
+    
     def finances():
         if sys.platform == "win32":
             os.startfile(finances_txt)
         else:
             opener = "open" if sys.platform =="darwin" else "xdg-open"
             subprocess.call([opener, finances_txt])
-
+    #Used this program with a home server to save and upload the xlsx and txt file to it.
     def upload_xlsx():
         file = open(filename, "rb")
-        url = 'smb://tetro:Retardalex07@192.168.1.18/share/expenses/Expenses.xlsx'
+        url = 'smb://username:password@192.168.1.18/path/to/file'
         smb = urllib.request.build_opener(SMBHandler)
         data = smb.open(url, data = file)
         data.close()
 
 
     def download_xlsx():
-        url = 'smb://tetro:Retardalex07@192.168.1.18/share/expenses/Expenses.xlsx'
+        url = 'smb://username:password@192.168.1.18/path/to/file'
         smb = urllib.request.build_opener(SMBHandler)
         fh = smb.open(url)
         with fh as response, open ("Expenses.xlsx", "wb") as out_file:
             shutil.copyfileobj(response, out_file)
 
-  
+    #Class for the calculations done
     class totals:
         def __init__(self):
             self.wb = openpyxl.load_workbook(filename)
@@ -79,14 +79,14 @@ def main():
             self.income_used = round(self.bill_tot / self.income * 100, 2)
             self.income_saved = (self.income_used - 100) * -1
 
-
+        #This sets the result on the main GUI
         def main_total(self):
             var.e_7.set(str(self.bill_tot) + '$')
             var.e_8.set(str(self.necessity_tot) + '$')
             var.e_9.set(str(self.discret_tot) + '$')
             var.e_10.set(str(self.income_saved) + '%')
             var.e_11.set(str(self.income) + '$')
-
+        #This sets the result on the basic overview GUI
         def overview(self):
             var.overview1.set(str(self.gas_tot) + '$')
             var.overview2.set(str(self.food_tot) + '$')
@@ -96,7 +96,7 @@ def main():
             var.overview6.set(str(self.credit_tot) + '$')
             var.overview7.set(str(self.income_saved) + '%')
             var.overview8.set(str(self.grand_total) + '$')
-
+        ##This sets the result on the investments GUI
         def inv_total(self):
             var.inv3.set(str(self.tfsa + self.PERSONAL) + '$')
             var.inv4.set(str(self.tfsa_tot) + '$')
@@ -104,7 +104,7 @@ def main():
 
     t = totals()
 
-    
+    #lots of variables so i just tossed em all in here
     class variables:
         def __init__(self):
             #Overview Window
@@ -147,7 +147,7 @@ def main():
 
     var = variables()
 
-
+    #class for all the minor GUIs
     class windows:
         def overview_window(self):
             window = tk.Toplevel(screen)
@@ -209,11 +209,11 @@ def main():
             E6 = tk.Entry(window, textvar=var.inv6, bd=5)
             E6.place(x=200, y=670)
 
-            def txt():
+            def txt(): #this displays the txt file on the text widget in tkinter
                 with open(finances_txt, 'r') as f:
                     T1.insert(tk.INSERT, f.read())
 
-            def exit():
+            def exit(): #Exit button, saves the file and closes window. This was more or less copypasted so I dont really understand it
                 def save():
                     with open(finances_txt, "w") as f:
                         data = T1.get("1.0", tk.END)
@@ -227,10 +227,10 @@ def main():
                 except:
                     window.destroy()
 
-            def enter(self):
+            def enter(self): #Trys to upload the txt file to server
                 info.server_c()
 
-            def s_info():
+            def s_info(): #Searches very basic info on yahoo finance. case and symbol sensitive. Ex. ETH_CAD, AAPL. All entrys done in the console/terminal 
                 ticker = input("stock, etf or crypto?: ")
                 if ticker == "stock":
                     stock = input("Enter ticker: ")
@@ -259,7 +259,7 @@ def main():
                 else:
                     print("incorrect input")
 
-            def value():
+            def value(): #this has its entry widgets in the inv GUI. checks the price x units you hold of an asset and just gives you the total value
                 ticker = var.inv5.get()
                 shares = var.inv5a.get()
                 ticker_data = yf.Ticker(ticker)
@@ -278,7 +278,7 @@ def main():
 
     win = windows()
 
-
+    #new sheets in excel for the next month
     class NEW_SHEET:
         def __init__(self):
             self.wb = openpyxl.load_workbook(filename)
@@ -333,7 +333,7 @@ def main():
 
     exc = NEW_SHEET()
 
-
+    #main GUI
     class Main_Window:
         def __init__(self, master):
             self.master = master
@@ -389,7 +389,7 @@ def main():
             self.editM1.add_command(label='UPLOAD_EXCEL', command=upload_xlsx)
             self.M1.add_cascade(label='EDIT', menu=self.editM1)
             master.bind('<Return>', self.clear)
-
+        
         def clear(self, _event=None):
             info.server_c()
             self.E1.delete(0, 'end')
@@ -411,7 +411,7 @@ def main():
 
     m = Main_Window(screen)
 
-
+    #class that enters all the information in the excel file, and saves and uploads the files to the server.
     class Enter_Info:
         def __init__(self):
             self.wb = openpyxl.load_workbook(filename)
